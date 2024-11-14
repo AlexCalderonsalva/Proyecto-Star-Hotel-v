@@ -1,0 +1,38 @@
+version: '3'
+services:
+  spring-boot-app:
+    image: starhotel-back-spring-boot:latest
+    container_name: starhotel-back-spring-boot-app
+    build:
+      context: ./ProyectoReservasStarHotel
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/bd_starhotelv1
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    depends_on:
+      - mysql-db
+
+  angular-app:
+    image: starhotel-front:latest
+    container_name: starhotel-angular-app
+    build:
+      context: ./starHotelFront
+    ports:
+      - "4200:80"
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: bd_starhotelv1
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./Scripts/:/docker-entrypoint-initdb.d/
+
+volumes:
+  db_data:
